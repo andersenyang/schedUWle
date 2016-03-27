@@ -4,7 +4,6 @@ from django.http import HttpResponse, JsonResponse
 from .models import User
 
 from scheduler.waterlooAPI import UWApiHelper
-from uwaterlooapi import UWaterlooAPI
 
 
 def index(request):
@@ -20,3 +19,8 @@ def course_list(request, last_subject=None, subject_filter=None):
     courses = uwapi.get_course_list(last_subject=last_subject, subject_filter=subject_filter)
 
     return JsonResponse(courses, safe=False)
+
+def course_details(request, subject, catalog_number):
+    uwapi = UWApiHelper()
+    course = uwapi.get_course_details(subject, catalog_number)
+    return JsonResponse(course)

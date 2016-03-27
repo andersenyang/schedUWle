@@ -1,6 +1,21 @@
+var delay = (function () {
+    var timer = 0;
+    return function (callback, ms) {
+	clearTimeout(timer);
+	timer = setTimeout(callback, ms);
+    };
+})();
+
 $(document).ready(function () {
     var $cal = $("#calendar");
+    var courseCollection = new Courses();
+    var coursesView = new CourseListView({ collection: courseCollection });
 
+    // Fetch list of courses and render the list view
+    coursesView.setElement($("#course-list"));
+    coursesView.fetchCollection();
+
+    // Render Calendar View
     $cal.fullCalendar({
 	header: false,
 	defaultView: "agendaWeek",
@@ -10,10 +25,17 @@ $(document).ready(function () {
 	minTime: "7:00:00",
     });
 
-    courseCollection = new Courses();
-    coursesView = new CourseListView({ collection: courseCollection });
-    coursesView.setElement($("#course-list"));
-    courseCollection.fetchCourses();
+    var $searchInput = $("#courseSearchInput");
+    $searchInput.keyup(function (ev) {
+	var keyCode = ev.which;
+	if (keyCode == 13) {
+	    ev.preventDefault(); 
+	} else {
+	    delay(function() {
+		coursesView.updateCollectionSubject($searchInput.val());
+	    }, 500);
+	}
+    });
 
     function addEvent(title, start, end, days) {
 	var eventObject = new Object();
