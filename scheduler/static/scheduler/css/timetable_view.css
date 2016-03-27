@@ -1,0 +1,36 @@
+.course-searchbar {
+    border: 1px solid #ddd;
+    border-bottom: 0px;
+}
+
+.course-list-container {
+    border: 1px solid #ddd;
+    height: 575px;
+    overflow: scroll;
+}
+
+.course-search-input {
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+.course-list-item {
+    display: inline-block;
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+}
+
+.course-code {
+    color: rgba(40, 96, 144, 0.91);
+    font-weight: bold;
+}
+
+.course-title {
+    color: rgba(40, 96, 144, 0.73);
+}
+
+.course-description {
+    margin-top: 10px;
+    font-size: 11px;
+    color: #777;
+}

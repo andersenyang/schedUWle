@@ -1,0 +1,27 @@
+{% extends 'scheduler/base.html' %}
+{% load staticfiles %}
+
+{% block head %}
+    <link rel='stylesheet' type="text/css" href="{% static 'fullcalendar/fullcalendar.min.css' %}" />
+    <link rel='stylesheet' type="text/css" href="{% static 'scheduler/css/timetable_view.css' %}" />
+    {% include "scheduler/course_list_templates.html" %}
+    <script src="{% static 'moment/moment.js' %}"></script>
+    <script src="{% static 'fullcalendar/fullcalendar.min.js' %}"></script>
+    <script src="{% static 'scheduler/js/course.js' %}"></script>
+    <script src="{% static 'scheduler/js/timetable_view.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+    <div class="row">
+	<div class="col-sm-4">
+	    <div class="course-searchbar col-sm-12">
+		<input type="text" class="course-search-input form-control" id="courseSearchInput" placeholder="Search for a class, e.g. ECON101..." />
+	    </div>
+	    <div id="course-list" class="course-list-container">
+	    </div>
+	</div>
+	<div class="col-sm-8">
+	    <div id='calendar'></div>    
+	</div>
+    </div>
+{% endblock %}
