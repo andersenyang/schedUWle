@@ -1,9 +1,20 @@
 <script type="text/template" id="course-template">
     <div class="course-list-item">
-	<div class="course-code col-sm-3"><%- subject %><%- catalog_number %></div>
-	<div class="course-title col-sm-9"><%- title %></div>
-	<div class="course-description col-sm-12"><%- description %></div>
+	<div class="course-header">
+	    <div class="course-code col-sm-3"><%- subject %><%- catalog_number %></div>
+	    <div class="course-title col-sm-9"><%- title %></div>
+	</div>
+	<div class="course-details"></div>
     </div>
+</script>
+
+<script type="text/template" id="detailed-course-template">
+    <div class="course-description col-sm-10"><%- description %></div>
+    <div class="col-sm-2">
+	<button type="button" class="btn btn-default btn-xs pull-right add-course" aria-label="Add to Timetable">
+	    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+	</button>
+    <div>
 </script>
 
 <script type="text/template" id="load-more-button">

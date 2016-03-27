@@ -22,6 +22,10 @@
     border-bottom: 1px solid #ddd;
 }
 
+.course-header {
+    cursor: pointer;
+}
+
 .course-code {
     color: rgba(40, 96, 144, 0.91);
     font-weight: bold;
@@ -29,6 +33,10 @@
 
 .course-title {
     color: rgba(40, 96, 144, 0.73);
+}
+
+.course-details {
+    display: none;
 }
 
 .course-description {

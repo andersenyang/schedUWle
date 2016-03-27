@@ -2,6 +2,19 @@ var Course = Backbone.Model.extend({
     url: function () {
 	return "course_details/" + this.get("subject") + "/" + this.get("catalog_number");
     },
+
+    fetchDetails: function () {
+	var self = this;
+	
+	this.fetch({
+	    success: function (model, response, options) {
+		self.trigger("fetchDetailsSuccess");
+	    },
+	    error: function (model, response, options) {
+		self.trigger("fetchDetailsError");
+	    }
+	});
+    }
 })
 
 var Courses = Backbone.Collection.extend({
@@ -30,25 +43,49 @@ var Courses = Backbone.Collection.extend({
 var CourseView = Backbone.View.extend({
     template: _.template($("#course-template").html()),
 
-    initialize: function () {
+    initialize: function (options) {
+	this.options = options || {};
 	this.render();
+	this.detailedViewTemplate = _.template($("#detailed-course-template").html());
+	this.listenTo(this.model, "fetchDetailsSuccess", this.renderDetails);
+    },
+
+    toggleDetails: function () {
+	var $details = this.$el.find(".course-details");
+	if ($details.is(":visible")) {
+	    $details.hide();
+	} else {
+	    this.model.fetchDetails();
+	}
     },
 
     render: function () {
 	var self = this;
 	this.$el.html(this.template(this.model.toJSON()));
-	this.$el.click(function () {
-	    self.loadDetails();
+	this.$el.find(".course-header").click(function () {
+	    self.toggleDetails();
 	});
     },
 
-    loadDetails: function () {
-	this.model.fetch();
+    renderDetails: function () {
+	var self = this;
+	var $details = this.$el.find(".course-details");
+
+	$details.html(this.detailedViewTemplate(this.model.toJSON()));
+	$details.find(".add-course").click(function () {
+	    self.addToTimetable();
+	});
+	$details.show();
+    },
+
+    addToTimetable: function () {
+	
     }
 });
 
 var CourseListView = Backbone.View.extend({
-    initialize: function () {
+    initialize: function (options) {
+	this.options = options || {};
 	this.filterSubject = "";
 	this.lastSubject = "";
 	this.loadMoreTemplate = _.template($("#load-more-button").html());
@@ -63,7 +100,7 @@ var CourseListView = Backbone.View.extend({
 	}
 
 	this.collection.each(function (course) {
-	    var courseView = new CourseView({ model: course });
+	    var courseView = new CourseView({ model: course, $cal: this.options.$cal });
 	    this.$el.append(courseView.el);
 	}, this);
 
@@ -74,6 +111,14 @@ var CourseListView = Backbone.View.extend({
 	this.updateCollectionLastSubject();
 	this.reset = false;
 	return this;
+    },
+
+    updateCollectionCatalogNumer: function (catalog_number) {
+	this.lastSubject = "";
+	this.catalogNumber = catalog_number;
+	
+	//this.reset = true;
+	//this.fetchCollection();
     },
 
     updateCollectionSubject: function (subject) {

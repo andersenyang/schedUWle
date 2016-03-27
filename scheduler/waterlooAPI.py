@@ -32,8 +32,10 @@ class UWApiHelper:
 
     def get_course_list(self, subject_filter=None, last_subject=None):
 	subjects = self._filtered_subjects(subject_filter=subject_filter, last_subject=last_subject)
-	return self._get_courses_from_subject_list(subjects)
+	courses = self._get_courses_from_subject_list(subjects)
+	return courses
 
     def get_course_details(self, subject, catalog_number):
 	course = self.helper.course(subject, catalog_number)
+	course["schedule"] = self.helper.course_schedule(subject, catalog_number)
 	return course

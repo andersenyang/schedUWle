@@ -8,12 +8,6 @@ var delay = (function () {
 
 $(document).ready(function () {
     var $cal = $("#calendar");
-    var courseCollection = new Courses();
-    var coursesView = new CourseListView({ collection: courseCollection });
-
-    // Fetch list of courses and render the list view
-    coursesView.setElement($("#course-list"));
-    coursesView.fetchCollection();
 
     // Render Calendar View
     $cal.fullCalendar({
@@ -25,30 +19,28 @@ $(document).ready(function () {
 	minTime: "7:00:00",
     });
 
+    var courseCollection = new Courses();
+    var coursesView = new CourseListView({ collection: courseCollection, $cal: $cal });
+
+    // Fetch list of courses and render the list view
+    coursesView.setElement($("#course-list"));
+    coursesView.fetchCollection();
+
+    // Bind search input
     var $searchInput = $("#courseSearchInput");
     $searchInput.keyup(function (ev) {
 	var keyCode = ev.which;
 	if (keyCode == 13) {
 	    ev.preventDefault(); 
 	} else {
+	    var inputArray = $searchInput.val().split(/[0-9]+/);
 	    delay(function() {
-		coursesView.updateCollectionSubject($searchInput.val());
+		coursesView.updateCollectionSubject(inputArray[0]);
+		if (inputArray.length > 1) {
+		    // this probably won't work yet
+		    //coursesView.updateCollectionCatalogNumber(inputArray[1]);
+		}
 	    }, 500);
 	}
     });
-
-    function addEvent(title, start, end, days) {
-	var eventObject = new Object();
-
-	eventObject.id = title;
-	eventObject.title = title;
-	eventObject.start = start;
-	eventObject.end = end;
-	eventObject.dow = days;
-	$cal.fullCalendar('renderEvent', eventObject);
-    }
-
-    function removeEvent(id) {
-	$cal.fullCalendar('removeEvents', id);
-    }
 });
