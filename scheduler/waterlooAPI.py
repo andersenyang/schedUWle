@@ -37,5 +37,28 @@ class UWApiHelper:
 
     def get_course_details(self, subject, catalog_number):
 	course = self.helper.course(subject, catalog_number)
-	course["schedule"] = self.helper.course_schedule(subject, catalog_number)
+	raw_schedules = self.helper.course_schedule(subject, catalog_number)
+
+	schedule = []
+	for s in raw_schedules:
+	    if len(schedule) < s["associated_class"]:
+		section = self._check_section(s)
+		schedule.append(section)
+	    else:
+		section = self._check_section(s, schedule[s["associated_class"]-1])
+		schedule.append(section)
+
+	course["schedule"] = schedule
 	return course
+
+    def _check_section(self, s, section=None):
+	if not section:
+	    section = {}
+
+	if "LEC" in s["section"]:
+	    section["lec"] = s
+	elif "TUT" in s["section"]:
+	    section["tut"] = s
+	elif "TEST" in s["section"]:
+	    section["test"] = s
+	return section

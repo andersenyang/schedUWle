@@ -9,14 +9,19 @@
 </script>
 
 <script type="text/template" id="detailed-course-template">
-    <div class="course-description col-sm-10"><%- description %></div>
-    <div class="col-sm-2">
-	<button type="button" class="btn btn-default btn-xs pull-right add-course" aria-label="Add to Timetable">
-	    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-	</button>
-    <div>
+    <div class="course-description col-sm-12"><%- description %></div>
+    <% _.each(schedule, function(section) { %>
+	<%- section.associated_class %>	
+	<div class="col-sm-2">
+	    <button type="button" class="btn btn-default btn-xs pull-right add-course" aria-label="Add to Timetable">
+		<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+	    </button>
+	<div>
+    <% }) %>
 </script>
 
 <script type="text/template" id="load-more-button">
     <div class="load-more">Load More...</div>
 </script>
+
+
