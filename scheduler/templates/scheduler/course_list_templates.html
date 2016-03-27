@@ -10,14 +10,60 @@
 
 <script type="text/template" id="detailed-course-template">
     <div class="course-description col-sm-12"><%- description %></div>
-    <% _.each(schedule, function(section) { %>
-	<%- section.associated_class %>	
-	<div class="col-sm-2">
-	    <button type="button" class="btn btn-default btn-xs pull-right add-course" aria-label="Add to Timetable">
-		<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-	    </button>
-	<div>
-    <% }) %>
+    <% _.each(schedule, function(s) { %>
+	<table class="table table-bordered table-condensed">
+	    <thead>
+		<tr>
+		    <td>Section</td>
+		    <td>Class</td>
+		    <td>Time</td>
+		    <td>Location</td>
+		</tr>
+	    </thead>
+	    <tbody>
+		<% if (s["lec"]) { %>
+		    <tr>
+			<td><%- s["lec"]["section"] %></td>
+			<td><%- s["lec"]["class_number"] %></td>
+			<td>
+			    <% _.each(s["lec"]["classes"], function(c) { %>
+				<p><%- c["date"]["start_time"] %> - <%- c["date"]["end_time"] %></p>
+			    <% }); %>
+			</td>
+			<td>
+			    <% _.each(s["lec"]["classes"], function(c) { %>
+				<p><%- c["location"]["building"] %><%- c["location"]["room"] %></p>
+			    <% }); %>
+			</td>
+		    </tr>
+		<% } %>
+		<% if (s["tut"]) { %>
+		    <tr>
+			<td><%- s["tut"]["section"] %></td>
+			<td><%- s["tut"]["class_number"] %></td>
+			<% _.each(s["tut"]["classes"], function(c) { %>
+			    <td>
+				<%- c["date"]["start_time"] %> - <%- c["date"]["end_time"] %>
+				</td>
+			    <td><%- c["location"]["building"] %><%- c["location"]["room"] %></td>
+			<% }); %>
+		    </tr>
+		<% } %>
+		<% if (s["test"]) { %>
+		    <tr>
+			<td><%- s["test"]["section"] %></td>
+			<td><%- s["test"]["class_number"] %></td>
+			<% _.each(s["test"]["classes"], function(c) { %>
+			    <td>
+				<%- c["date"]["start_time"] %> - <%- c["date"]["end_time"] %>
+				</td>
+			    <td><%- c["location"]["building"] %><%- c["location"]["room"] %></td>
+			<% }); %>
+		    </tr>
+		<% } %>
+	    </tbody>
+	</table>
+    <% }); %>
 </script>
 
 <script type="text/template" id="load-more-button">
