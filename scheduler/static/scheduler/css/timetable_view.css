@@ -58,3 +58,7 @@
     margin-bottom: -1px;
     border-radius: 0px;
 }
+
+.event-conflict {
+    background-color: red;
+}

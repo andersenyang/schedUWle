@@ -199,8 +199,6 @@ var CourseListView = Backbone.View.extend({
     addToEventList: function (classDetails) {
 	var self = this;
 
-	//console.log(classDetails);
-	//console.log(classDetails["classes"]);
 	// parse class schedule and add to eventslist
 	_.each(classDetails.classes, function (c) {
 	    var classEvent = new Object();
@@ -225,10 +223,8 @@ var CourseListView = Backbone.View.extend({
 	    classEvent.dow = self.parseDOW(c.date.weekdays);
 	    classEvent.range = range;
 
-	    console.log(classEvent);
 	    self.classEventsCollection.add(classEvent);
 	});
-	//console.log(this.classEventsCollection);
     },
 
     parseDOW: function (daysString) {

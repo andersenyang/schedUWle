@@ -17,6 +17,7 @@ $(document).ready(function () {
 	    right: 'today prev,next'
 	},
 	defaultView: "agendaWeek",
+	weekends: false,
 	height: 640,
 	allDaySlot: false,
 	minTime: "7:00:00",
