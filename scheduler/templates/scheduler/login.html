@@ -1,8 +1,25 @@
-{% if user and not user.is_anonymous %}
-  <a>Hello, {{ user.get_full_name }}!</a>
-  <br>
-  <a href="/scheduler">Scheduler</a>
-  <a href="/logout">Logout</a>
-{% else %}
-  <a href="{% url 'social:begin' 'facebook' %}?next={{ request.path }}">Login with Facebook</a>
-{% endif %}
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>{% block title %}Login{% endblock %}</title>
+	<!-- include some css stuff here -->
+	<link rel="stylesheet" type="text/css" href="{% static 'bootstrap-3.3.6-dist/css/bootstrap.min.css' %}" />
+	</head>
+    <body>
+	{% if user and not user.is_anonymous %}
+	  <a>Hello, {{ user.get_full_name }}!</a>
+	  <br>
+	  <a href="/scheduler">Scheduler</a>
+	  <a href="/logout">Logout</a>
+	{% else %}
+	<div align="center">
+		<ul class="nav navbar-center">
+			<li><a href="{% url 'social:begin' 'facebook' %}?next={{ request.path }}">Login with Facebook</a></li>
+		</ul>
+	</div>
+	{% endif %}
+	</body>
