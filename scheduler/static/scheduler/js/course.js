@@ -193,7 +193,11 @@ var CourseListView = Backbone.View.extend({
 	if (classModel["test"]) {
 	    this.addToEventList(classModel["test"]);
 	}
+	this.updateUserShortlist();
 	this.updateCalendar();
+    },
+
+    updateUserShortlist: function () {
     },
 
     addToEventList: function (classDetails) {

@@ -12,6 +12,8 @@ from scheduler.waterlooAPI import UWApiHelper
 def index(request):
     return timetable(request)
 
+
+@login_required(login_url="/")
 def timetable(request):
     return render(request, 'scheduler/timetable.html')
 

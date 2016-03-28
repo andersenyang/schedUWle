@@ -10,3 +10,12 @@ class User(models.Model):
 
     def __str__(self):
 	return self.name
+
+
+class UserShortlistedCourse(models.Model):
+    user_id = models.IntegerField()
+    class_number = models.IntegerField()
+    priority = models.IntegerField(default=0)
+
+    def __str__(self):
+	return "User: " + self.user_id + "Class Number:" + self.class_number
