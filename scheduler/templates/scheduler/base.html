@@ -24,9 +24,9 @@
 		</div>
 		<div class="collapse navbar-collapse" id="navbar-links">
 		    <ul class="nav navbar-nav">
+			{% if user.is_authenticated %}
 			<li><a href="/scheduler/course_list">Course List</a></li>
 			<li><a href="/scheduler/">Timetable</a></li>
-			{% if user.is_authenticated %}
 			<li><a id="logout" href="/logout">Logout</a></li>
 			{% else %}
 			<li><a id="login" href="{% url 'social:begin' 'facebook' %}?next={{ request.path }}">Login with Facebook</a></li>
