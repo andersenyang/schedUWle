@@ -8,7 +8,7 @@ from .models import User
 
 from scheduler.waterlooAPI import UWApiHelper
 
-@login_required
+@login_required(login_url="/")
 def index(request):
     return timetable(request)
 

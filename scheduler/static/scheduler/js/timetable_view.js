@@ -14,7 +14,7 @@ $(document).ready(function () {
 	header: {
 	    left: 'title',
 	    center: '',
-	    right: 'today agendaWeek,month prev,next'
+	    right: 'today prev,next'
 	},
 	defaultView: "agendaWeek",
 	height: 640,

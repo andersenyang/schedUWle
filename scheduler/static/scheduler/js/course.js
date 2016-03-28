@@ -199,12 +199,13 @@ var CourseListView = Backbone.View.extend({
     addToEventList: function (classDetails) {
 	var self = this;
 
-	console.log(classDetails);
-	console.log(classDetails["classes"]);
+	//console.log(classDetails);
+	//console.log(classDetails["classes"]);
 	// parse class schedule and add to eventslist
-	_.each(classDetails["classes"], function (c) {
+	_.each(classDetails.classes, function (c) {
 	    var classEvent = new Object();
-	    var range = {}
+	    var range = {};
+	    var class_id = classDetails.class_number + c.date.start_time;
 
 	    if (c.date.start_date && c.date.end_date) {
 		var sdate = c.date.start_date.split("/");
@@ -212,18 +213,21 @@ var CourseListView = Backbone.View.extend({
 
 		range.start_date = moment().month(sdate[0]).date(sdate[1]);
 		range.end_date = moment().month(edate[0]).date(edate[1]);
+
+		class_id = class_id + sdate[0] + "_" + sdate[1];
 	    }
 
-	    classEvent.id = classDetails.subject + classDetails.catalog_number;
-	    classEvent.title = classEvent.id;
+	    classEvent.id = class_id;
+	    classEvent.title = classDetails.subject + classDetails.catalog_number;
+	    classEvent.classNumber = classDetails.class_number;
 	    classEvent.start = c.date.start_time;
 	    classEvent.end = c.date.end_time;
 	    classEvent.dow = self.parseDOW(c.date.weekdays);
 	    classEvent.range = range;
 
+	    console.log(classEvent);
 	    self.classEventsCollection.add(classEvent);
 	});
-	console.log(this.classEventsCollection);
 	//console.log(this.classEventsCollection);
     },
 
