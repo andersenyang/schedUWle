@@ -1,14 +1,15 @@
-from django.shortcuts import render
+from django.shortcuts import redirect, render
 from django.http import HttpResponse, JsonResponse
+from django.contrib.auth import logout as auth_logout
+from django.contrib.auth.decorators import login_required
 
 from .models import User
 
 from scheduler.waterlooAPI import UWApiHelper
 
-
+@login_required(login_url='/')
 def index(request):
     return timetable(request)
-
 
 def timetable(request):
     return render(request, 'scheduler/timetable.html')
@@ -24,3 +25,11 @@ def course_details(request, subject, catalog_number):
     uwapi = UWApiHelper()
     course = uwapi.get_course_details(subject, catalog_number)
     return JsonResponse(course)
+
+def login(request):
+    return render(request, 'scheduler/login.html')
+
+def logout(request):
+    auth_logout(request)
+    return redirect('/')
+
