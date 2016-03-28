@@ -53,3 +53,8 @@
     padding: 7px;
     cursor: pointer;
 }
+
+.add-course {
+    margin-bottom: -1px;
+    border-radius: 0px;
+}

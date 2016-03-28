@@ -46,7 +46,7 @@ class UWApiHelper:
 		schedule.append(section)
 	    else:
 		section = self._check_section(s, schedule[s["associated_class"]-1])
-		schedule.append(section)
+		schedule[s["associated_class"]-1] = section
 
 	course["schedule"] = schedule
 	return course
@@ -59,6 +59,6 @@ class UWApiHelper:
 	    section["lec"] = s
 	elif "TUT" in s["section"]:
 	    section["tut"] = s
-	elif "TEST" in s["section"]:
+	elif "TST" in s["section"]:
 	    section["test"] = s
 	return section

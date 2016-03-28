@@ -73,15 +73,28 @@ var CourseView = Backbone.View.extend({
 
 	$details.html(this.detailedViewTemplate(this.model.toJSON()));
 	$details.find(".add-course").click(function () {
-	    self.addToTimetable();
+	    var class_index = this.dataset.index;
+	    self.trigger("courseAdded", self.model.get("schedule")[class_index]);
 	});
 	$details.show();
-    },
-
-    addToTimetable: function () {
-	
     }
 });
+
+var EventsCollection = Backbone.Collection.extend({
+    initialize: function (options) {
+	this.options = options || {};
+    },
+
+    getEventList: function () {
+	var eventsList = [];
+	this.each(function (model) {
+	    if (model.attributes.title) {
+		eventsList.push(model.attributes);
+	    }
+	});
+	return eventsList;
+    }
+})
 
 var CourseListView = Backbone.View.extend({
     initialize: function (options) {
@@ -89,6 +102,7 @@ var CourseListView = Backbone.View.extend({
 	this.filterSubject = "";
 	this.lastSubject = "";
 	this.loadMoreTemplate = _.template($("#load-more-button").html());
+	this.classEventsCollection = new EventsCollection({ parentView: this });
 	this.listenTo(this.collection, 'fetchEmpty', this.hideLoadMore);
 	this.listenTo(this.collection, 'fetchSuccess', this.render);
     },
@@ -100,9 +114,15 @@ var CourseListView = Backbone.View.extend({
 	}
 
 	this.collection.each(function (course) {
-	    var courseView = new CourseView({ model: course, $cal: this.options.$cal });
-	    this.$el.append(courseView.el);
-	}, this);
+	    var options = {
+		model: course,
+		$cal: self.options.$cal,
+		parentView: self
+	    }
+	    var courseView = new CourseView(options);
+	    self.listenTo(courseView, 'courseAdded', self.addCourse);
+	    self.$el.append(courseView.el);
+	});
 
 	this.$el.append(this.loadMoreTemplate());
 	this.$el.find(".load-more").click(function () {
@@ -161,5 +181,81 @@ var CourseListView = Backbone.View.extend({
 	if ($loadMore != undefined) {
 	    $loadMore.remove();
 	}
+    },
+
+    addCourse: function (classModel) {
+	if (classModel["lec"]) {
+	    this.addToEventList(classModel["lec"]);
+	}
+	if (classModel["tut"]) {
+	    this.addToEventList(classModel["tut"]);
+	}
+	if (classModel["test"]) {
+	    this.addToEventList(classModel["test"]);
+	}
+	this.updateCalendar();
+    },
+
+    addToEventList: function (classDetails) {
+	var self = this;
+
+	console.log(classDetails);
+	console.log(classDetails["classes"]);
+	// parse class schedule and add to eventslist
+	_.each(classDetails["classes"], function (c) {
+	    var classEvent = new Object();
+	    var range = {}
+
+	    if (c.date.start_date && c.date.end_date) {
+		var sdate = c.date.start_date.split("/");
+		var edate = c.date.end_date.split("/");
+
+		range.start_date = moment().month(sdate[0]).date(sdate[1]);
+		range.end_date = moment().month(edate[0]).date(edate[1]);
+	    }
+
+	    classEvent.id = classDetails.subject + classDetails.catalog_number;
+	    classEvent.title = classEvent.id;
+	    classEvent.start = c.date.start_time;
+	    classEvent.end = c.date.end_time;
+	    classEvent.dow = self.parseDOW(c.date.weekdays);
+	    classEvent.range = range;
+
+	    self.classEventsCollection.add(classEvent);
+	});
+	console.log(this.classEventsCollection);
+	//console.log(this.classEventsCollection);
+    },
+
+    parseDOW: function (daysString) {
+	var days = daysString.split(/(?=[A-Z]+)/);
+	var dow = [];
+	_.each(days, function (day) {
+	    switch (day) {
+		case "M":
+		    dow.push(1);
+		    break;
+		case "T":
+		    dow.push(2);
+		    break;
+		case "W":
+		    dow.push(3);
+		    break;
+		case "Th":
+		    dow.push(4);
+		    break;
+		case "F":
+		    dow.push(5);
+		    break;
+	    }
+	});
+	return dow;
+    },
+
+    updateCalendar: function () {
+	var eventsList = this.classEventsCollection.getEventList();
+
+	this.options.$cal.fullCalendar('removeEvents');
+	this.options.$cal.fullCalendar('addEventSource', eventsList);
     }
 });

@@ -11,12 +11,18 @@ $(document).ready(function () {
 
     // Render Calendar View
     $cal.fullCalendar({
-	header: false,
+	header: {
+	    left: 'title',
+	    center: '',
+	    right: 'today agendaWeek,month prev,next'
+	},
 	defaultView: "agendaWeek",
 	height: 640,
-	columnFormat: "ddd",
 	allDaySlot: false,
 	minTime: "7:00:00",
+	eventRender: function (event) {
+	    return eventInRange($cal, event);
+	}
     });
 
     var courseCollection = new Courses();
@@ -43,4 +49,7 @@ $(document).ready(function () {
 	    }, 500);
 	}
     });
+
+    //addEvent($cal, "MTE120", "10:00", "14:00", [0,2,5]);
+    //addEvent($cal, "MTE220", "11:00", "15:00", [0,2,5]);
 });
