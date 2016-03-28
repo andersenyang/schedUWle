@@ -19,4 +19,7 @@ from django.contrib import admin
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^scheduler/', include('scheduler.urls')),
+    url('', include('social.apps.django_app.urls', namespace='social')),
+    url(r'^$', 'scheduler.views.login'),
+    url(r'^logout/$', 'scheduler.views.logout'),
 ]

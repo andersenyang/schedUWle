@@ -26,6 +26,7 @@
 		    <ul class="nav navbar-nav">
 			<li><a href="/scheduler/course_list">Course List</a></li>
 			<li><a href="/scheduler/">Timetable</a></li>
+			<li><a id="login" href="{% url 'social:begin' 'facebook' %}?next={{ request.path }}">Login with Facebook</a></li>
 		    </ul>
 		</div>
 	    </div>

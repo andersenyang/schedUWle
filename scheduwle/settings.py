@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'social.apps.django_app.default',
 ]
 
 MIDDLEWARE_CLASSES = [
@@ -64,6 +65,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'social.apps.django_app.context_processors.backends',
+                'social.apps.django_app.context_processors.login_redirect',
             ],
         },
     },
@@ -100,6 +103,40 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+AUTHENTICATION_BACKENDS = [
+    'social.backends.facebook.FacebookOAuth2',
+    #'social.backends.open_id.OpenIdAuth',
+    #'social.backends.google.GoogleOpenId',
+    #'social.backends.google.GoogleOAuth2',
+    #'social.backends.google.GoogleOAuth',
+    #'social.backends.twitter.TwitterOAuth',
+    #'social.backends.yahoo.YahooOpenId',
+    'django.contrib.auth.backends.ModelBackend',
+]
+
+# Python Social Auth Settings
+
+SOCIAL_AUTH_URL_NAMESPACE = 'social'
+SOCIAL_AUTH_FACEBOOK_KEY = '781495628647589'
+SOCIAL_AUTH_FACEBOOK_SECRET = 'a21b5d4908cf4835c22604de3e47dd59'
+SOCIAL_AUTH_FACEBOOK_SCOPE = ['email']
+SOCIAL_AUTH_FACEBOOK_PROFILE_EXTRA_PARAMS = {
+  'locale': 'en_CA',
+  'fields': 'id, name, email, age_range'
+}
+SOCIAL_AUTH_AUTHENTICATION_BACKENDS = [
+    #'social.backends.open_id.OpenIdAuth',
+    'social.backends.facebook.FacebookOAuth2',
+    #'social.backends.google.GoogleOpenId',
+    #'social.backends.google.GoogleOAuth2',
+    #'social.backends.google.GoogleOAuth',
+    #'social.backends.twitter.TwitterOAuth',
+    #'social.backends.yahoo.YahooOpenId',
+]
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/scheduler/'
+SOCIAL_AUTH_LOGIN_URL = '/scheduler/'
+SOCIAL_AUTH_LOGIN_ERROR_URL = '/'
 
 
 # Internationalization
