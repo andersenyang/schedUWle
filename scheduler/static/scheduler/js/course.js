@@ -104,7 +104,6 @@ var CourseView = Backbone.View.extend({
 	$details.html(this.detailedViewTemplate(this.model.toJSON()));
 	$details.find(".add-course").click(function () {
 	    var class_index = this.dataset.index;
-	    console.log(self.model.get("schedule")[class_index])
 	    self.trigger("courseAdded", self.model.get("schedule")[class_index]);
 	});
 	$details.show();
@@ -144,6 +143,9 @@ var CourseListView = Backbone.View.extend({
 	this.lastSubject = "";
 	this.loadMoreTemplate = _.template($("#load-more-button").html());
 	this.classEventsCollection = new EventsCollection({ parentView: this });
+	this.selectedClassesView = new SelectedClassesView({ parentView: this });
+	this.selectedClassesView.setElement($(".course-tags"));
+	this.listenTo(this.selectedClassesView, 'courseRemoved', this.removeCourse);
 	this.listenTo(this.collection, 'fetchEmpty', this.hideLoadMore);
 	this.listenTo(this.collection, 'fetchSuccess', this.render);
     },
@@ -229,14 +231,12 @@ var CourseListView = Backbone.View.extend({
 	$.ajax({
 	    url: 'load_shortlist',
 	    success: function (data) {
-		data = $.parseJSON(data);
-		//self.loadShortlist(data);
+		_.each(data, function (classEvent) {
+		    self.addToEventList(classEvent[0]);
+		});
+		self.updateCalendar();
 	    }
 	});
-    },
-
-    loadShortlist: function (data) {
-	console.log(shortlist);
     },
 
     addCourse: function (classModel) {
@@ -249,11 +249,15 @@ var CourseListView = Backbone.View.extend({
 	if (classModel["test"]) {
 	    this.addToEventList(classModel["test"]);
 	}
-	this.updateUserShortlist();
+	this.saveUserShortlist();
 	this.updateCalendar();
     },
 
-    updateUserShortlist: function () {
+    removeCourse: function (courseCode) {
+	// implement!
+    },
+
+    saveUserShortlist: function () {
 	var classNumbersList = this.classEventsCollection.getClassNumbers();
 	var data = { "class_numbers": JSON.stringify(classNumbersList) };
 	$.ajax({
@@ -291,6 +295,7 @@ var CourseListView = Backbone.View.extend({
 	    classEvent.range = range;
 
 	    self.classEventsCollection.add(classEvent);
+	    self.selectedClassesView.addClass(classEvent.title, classEvent.classNumber);
 	});
     },
 
@@ -324,5 +329,49 @@ var CourseListView = Backbone.View.extend({
 
 	this.options.$cal.fullCalendar('removeEvents');
 	this.options.$cal.fullCalendar('addEventSource', eventsList);
+    }
+});
+
+var SelectedClassesView = Backbone.View.extend({
+    initialize: function (options) {
+	this.options = options || {};
+	this.classes = {};
+    },
+
+    renderClass: function (code) {
+	var courseTag = new SelectedCourseTag({ "title": code });
+	this.listenTo(courseTag, 'courseRemoved', this.courseRemoved);
+	this.$el.append(courseTag.el);
+    },
+
+    addClass: function (code, number) {
+	if (this.classes[code]) {
+	    this.classes[code].push(number)
+	} else {
+	    this.classes[code] = [number];
+	    this.renderClass(code);
+	}
+    },
+
+    courseRemoved: function (code) {
+	this.trigger("courseRemoved", code);
+    }
+});
+
+var SelectedCourseTag = Backbone.View.extend({
+    tagName: "span",
+    template: _.template($("#course-tag").html()),
+    
+    initialize: function (options) {
+	this.options = options || {};
+	this.render();
+    },
+
+    render: function () {
+	var self = this;
+	this.$el.html(this.template({ title: this.options.title }));
+	this.$el.find(".glyphicon-remove").click(function () {
+	    self.trigger("courseRemoved", self.options.title);
+	});
     }
 });

@@ -62,3 +62,18 @@
 .event-conflict {
     background-color: red;
 }
+
+.course-shortlist {
+    border: 1px solid #ddd;
+    border-bottom: 0px;
+    padding: 5px;
+    height: 48px;
+}
+
+.course-tags {
+    display: inline;
+}
+
+.course-tag {
+    margin: 2px;
+}

@@ -62,3 +62,6 @@ class UWApiHelper:
 	elif "TST" in s["section"]:
 	    section["test"] = s
 	return section
+
+    def get_class_schedule(self, class_number):
+	return self.helper.schedule_by_class_number(class_number)

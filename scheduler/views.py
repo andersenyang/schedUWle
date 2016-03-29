@@ -52,11 +52,10 @@ def get_shortlist(request):
     user = request.user._wrapped if hasattr(request.user,'_wrapped') else request.user
     uwapi = UWApiHelper()
 
-    course_shortlist = []
     qs = UserShortlistedCourse.objects.filter(user_id=user.id)
-    response = [uc.toJSON() for uc in qs]
+    course_shortlist = [uwapi.get_class_schedule(uc.class_number) for uc in qs]
 
-    return JsonResponse(response, safe=False)
+    return JsonResponse(course_shortlist, safe=False)
 	
 
 def course_list(request, last_subject=None, subject_filter=None):
