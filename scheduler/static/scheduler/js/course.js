@@ -1,3 +1,33 @@
+function getCookie(name) {
+    var cookieValue = null;
+    if (document.cookie && document.cookie != '') {
+        var cookies = document.cookie.split(';');
+        for (var i = 0; i < cookies.length; i++) {
+            var cookie = jQuery.trim(cookies[i]);
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+var csrftoken = getCookie('csrftoken');
+
+function csrfSafeMethod(method) {
+    // these HTTP methods do not require CSRF protection
+    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+}
+
+$.ajaxSetup({
+    beforeSend: function(xhr, settings) {
+        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+            xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        }
+    }
+});
+
 var Course = Backbone.Model.extend({
     url: function () {
 	return "course_details/" + this.get("subject") + "/" + this.get("catalog_number");
@@ -74,6 +104,7 @@ var CourseView = Backbone.View.extend({
 	$details.html(this.detailedViewTemplate(this.model.toJSON()));
 	$details.find(".add-course").click(function () {
 	    var class_index = this.dataset.index;
+	    console.log(self.model.get("schedule")[class_index])
 	    self.trigger("courseAdded", self.model.get("schedule")[class_index]);
 	});
 	$details.show();
@@ -93,6 +124,16 @@ var EventsCollection = Backbone.Collection.extend({
 	    }
 	});
 	return eventsList;
+    },
+
+    getClassNumbers: function () {
+	var classNumbers = [];
+	this.each(function (model) {
+	    if (model.attributes.title) {
+		classNumbers.push(model.get("classNumber"));
+	    }
+	});
+	return classNumbers;
     }
 })
 
@@ -183,6 +224,21 @@ var CourseListView = Backbone.View.extend({
 	}
     },
 
+    initialFetch: function () {
+	var self = this;
+	$.ajax({
+	    url: 'load_shortlist',
+	    success: function (data) {
+		data = $.parseJSON(data);
+		//self.loadShortlist(data);
+	    }
+	});
+    },
+
+    loadShortlist: function (data) {
+	console.log(shortlist);
+    },
+
     addCourse: function (classModel) {
 	if (classModel["lec"]) {
 	    this.addToEventList(classModel["lec"]);
@@ -198,6 +254,13 @@ var CourseListView = Backbone.View.extend({
     },
 
     updateUserShortlist: function () {
+	var classNumbersList = this.classEventsCollection.getClassNumbers();
+	var data = { "class_numbers": JSON.stringify(classNumbersList) };
+	$.ajax({
+	    method: "POST",
+	    url: "update_shortlist",
+	    data: data
+	});
     },
 
     addToEventList: function (classDetails) {

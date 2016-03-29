@@ -31,6 +31,7 @@ $(document).ready(function () {
 
     // Fetch list of courses and render the list view
     coursesView.setElement($("#course-list"));
+    coursesView.initialFetch();
     coursesView.fetchCollection();
 
     // Bind search input
